@@ -1,12 +1,14 @@
 **English** · [کوردی](README.ckb.md)
 
-![Leraw](images/01-hero.png)
+![Leraw](images/09-post.png)
 
 # Leraw
 
 Leraw is a typeface for writing Kurdish, in Sorani and in Kurmanji. It is based on Rubik by Hubert & Fischer, with the Sorani letters Rubik lacks (ڕ ڵ ۆ ێ ە ھ) added and the Arabic slanted along with the Latin in the italic.
 
 There are seven weights from Light to Black, each with an italic, and variable versions of both.
+
+![Leraw](images/01-hero.png)
 
 ## Install
 
