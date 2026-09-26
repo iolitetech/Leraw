@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.venv/
+archive/
+build/
+dist/
+master_ufo/
+instance_ufo/

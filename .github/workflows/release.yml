@@ -1,0 +1,64 @@
+name: Release
+
+# Push a tag like v1.1 to build the fonts, render the README images,
+# commit both to the default branch and publish a release with the fonts.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: Install
+        run: |
+          pip install -r requirements.txt playwright
+          python -m playwright install --with-deps chromium
+
+      - name: Build fonts
+        run: LERAW_VERSION="${GITHUB_REF_NAME#v}" python build.py
+
+      - name: Render images
+        run: python showcase/render.py
+
+      - name: Package
+        run: |
+          mkdir -p "dist/Leraw-$GITHUB_REF_NAME"
+          cp -r fonts/variable fonts/static OFL.txt "dist/Leraw-$GITHUB_REF_NAME/"
+          (cd dist && zip -r "Leraw-$GITHUB_REF_NAME.zip" "Leraw-$GITHUB_REF_NAME")
+
+      - name: Commit fonts and images
+        env:
+          BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          cp -r fonts images "$RUNNER_TEMP/"
+          git fetch origin "$BRANCH"
+          git checkout -B "$BRANCH" "origin/$BRANCH"
+          rm -rf fonts images
+          cp -r "$RUNNER_TEMP/fonts" "$RUNNER_TEMP/images" .
+          git add fonts images
+          if git diff --cached --quiet; then
+            echo "Fonts and images are already up to date."
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "Build fonts and images for $GITHUB_REF_NAME"
+            git push origin "$BRANCH"
+          fi
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" "dist/Leraw-$GITHUB_REF_NAME.zip" \
+            --title "Leraw $GITHUB_REF_NAME" --generate-notes
