@@ -67,12 +67,48 @@ def stat(f, italic):
                        dict(tag='ital', name='Italic', values=[ital])], elidedFallbackName='Regular')
 
 
+def set_vertical_metrics(f):
+    """Google Fonts vertical metrics schema:
+    sTypoAscender = 950, sTypoDescender = -250, sTypoLineGap = 0
+    hhea.ascent = 950, hhea.descent = -250, hhea.lineGap = 0
+    Sum = 950 + abs(-250) + 0 = 1200 (120% of 1000 UPM)
+    """
+    f['hhea'].ascent = 950
+    f['hhea'].descent = -250
+    f['hhea'].lineGap = 0
+    f['OS/2'].sTypoAscender = 950
+    f['OS/2'].sTypoDescender = -250
+    f['OS/2'].sTypoLineGap = 0
+
+
+def fix_arabic_shaping(f):
+    """Ensure Alef Maksura (uni0649) has initial and medial substitutions (mapping to Yeh init/medi)
+    as required by Arabic shaping standards and Shaperglot.
+    """
+    if 'GSUB' not in f:
+        return
+    gsub = f['GSUB'].table
+    feature_lookups = {}
+    for rec in gsub.FeatureList.FeatureRecord:
+        if rec.FeatureTag in ('init', 'medi'):
+            feature_lookups[rec.FeatureTag] = rec.Feature.LookupListIndex
+
+    for feat_tag, glyph_target in [('init', 'uni064A.init'), ('medi', 'uni064A.medi')]:
+        for idx in feature_lookups.get(feat_tag, []):
+            lookup = gsub.LookupList.Lookup[idx]
+            for st in lookup.SubTable:
+                if hasattr(st, 'mapping') and 'uni064A' in st.mapping:
+                    st.mapping['uni0649'] = glyph_target
+
+
 def compile_variable(source, path, italic):
     subprocess.run([sys.executable, '-m', 'fontmake', '-g', source, '-o', 'variable',
                     '--output-path', path, '--verbose', 'WARNING'], check=True)
     f = TTFont(path)
     unhinted(f)
     stat(f, italic)
+    set_vertical_metrics(f)
+    fix_arabic_shaping(f)
     set_version(f)
     f.save(path)
 
