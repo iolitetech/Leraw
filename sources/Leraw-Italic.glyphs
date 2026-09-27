@@ -128054,7 +128054,7 @@ UUID0 = 1;
 };
 isItalic = 1;
 linkStyle = Light;
-name = "Light Italic";
+name = Light;
 weightClass = 300;
 },
 {
@@ -128066,7 +128066,7 @@ instanceInterpolations = {
 UUID0 = 0.8125;
 };
 isItalic = 1;
-name = Italic;
+name = Regular;
 },
 {
 axesValues = (
@@ -128078,7 +128078,7 @@ UUID0 = 0.59375;
 };
 isItalic = 1;
 linkStyle = Medium;
-name = "Medium Italic";
+name = Medium;
 weightClass = 500;
 },
 {
@@ -128091,7 +128091,7 @@ UUID0 = 0.4875;
 };
 isItalic = 1;
 linkStyle = SemiBold;
-name = "SemiBold Italic";
+name = SemiBold;
 weightClass = 600;
 },
 {
@@ -128104,7 +128104,7 @@ UUID0 = 0.375;
 };
 isBold = 1;
 isItalic = 1;
-name = "Bold Italic";
+name = Bold;
 weightClass = 700;
 },
 {
@@ -128117,7 +128117,7 @@ UUID0 = 0.1875;
 };
 isItalic = 1;
 linkStyle = ExtraBold;
-name = "ExtraBold Italic";
+name = ExtraBold;
 weightClass = 800;
 },
 {
@@ -128129,7 +128129,7 @@ instanceInterpolations = {
 };
 isItalic = 1;
 linkStyle = Black;
-name = "Black Italic";
+name = Black;
 weightClass = 900;
 },
 {
